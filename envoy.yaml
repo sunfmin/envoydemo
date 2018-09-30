@@ -1,0 +1,74 @@
+{
+   "admin": {
+      "access_log_path": "/tmp/admin_access.log"
+   },
+   "static_resources": {
+      "clusters": [
+         {
+            "connect_timeout": "0.25s",
+            "dns_lookup_family": "V4_ONLY",
+            "hosts": [
+               {
+                  "socket_address": {
+                     "address": "www.baidu.com",
+                     "port_value": 80
+                  }
+               }
+            ],
+            "lb_policy": "ROUND_ROBIN",
+            "name": "service_baidu",
+            "type": "LOGICAL_DNS"
+         }
+      ],
+      "listeners": [
+         {
+            "address": {
+               "socket_address": {
+                  "address": "0.0.0.0",
+                  "port_value": 10000
+               }
+            },
+            "filter_chains": [
+               {
+                  "filters": [
+                     {
+                        "config": {
+                           "http_filters": [
+                              {
+                                 "name": "envoy.router"
+                              }
+                           ],
+                           "route_config": {
+                              "name": "local_route",
+                              "virtual_hosts": [
+                                 {
+                                    "domains": [
+                                       "*"
+                                    ],
+                                    "name": "local_service",
+                                    "routes": [
+                                       {
+                                          "match": {
+                                             "prefix": "/"
+                                          },
+                                          "route": {
+                                             "cluster": "service_baidu",
+                                             "host_rewrite": "www.baidu.com"
+                                          }
+                                       }
+                                    ]
+                                 }
+                              ]
+                           },
+                           "stat_prefix": "ingress_http"
+                        },
+                        "name": "envoy.http_connection_manager"
+                     }
+                  ]
+               }
+            ],
+            "name": "baidu"
+         }
+      ]
+   }
+}
