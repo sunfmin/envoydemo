@@ -22,7 +22,7 @@
                }
             ],
             "lb_policy": "ROUND_ROBIN",
-            "name": "service_baidu",
+            "name": "testkit",
             "type": "LOGICAL_DNS"
          }
       ],
@@ -55,11 +55,31 @@
                                     "routes": [
                                        {
                                           "match": {
-                                             "prefix": "/a"
+                                             "prefix": "/redirect"
                                           },
                                           "redirect": {
-                                             "path_redirect": "/b",
+                                             "path_redirect": "/redirect_b",
                                              "strip_query": false
+                                          }
+                                       },
+                                       {
+                                          "direct_response": {
+                                             "body": {
+                                                "inline_string": "felix"
+                                             },
+                                             "status": 201
+                                          },
+                                          "match": {
+                                             "prefix": "/direct"
+                                          }
+                                       },
+                                       {
+                                          "match": {
+                                             "prefix": "/testkit"
+                                          },
+                                          "route": {
+                                             "cluster": "testkit",
+                                             "host_rewrite": "www.testkit.com"
                                           }
                                        }
                                     ]

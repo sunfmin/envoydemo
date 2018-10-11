@@ -11,7 +11,7 @@
   static_resources: {
     clusters: [
       {
-        name: 'service_baidu',
+        name: 'testkit',
         connect_timeout: '0.25s',
         type: 'LOGICAL_DNS',
         dns_lookup_family: 'V4_ONLY',
@@ -61,16 +61,32 @@
                         routes: [
                           {
                             match: {
-                              prefix: '/a',
+                              prefix: '/redirect',
                             },
                             redirect: {
-                              path_redirect: '/b',
+                              path_redirect: '/redirect_b',
                               strip_query: false,
                             },
-                            // route: {
-                            // host_rewrite: 'www.baidu.com',
-                            // cluster: 'service_baidu',
-                            // },
+                          },
+                          {
+                            match: {
+                              prefix: '/direct',
+                            },
+                            direct_response: {
+                              status: 201,
+                              body: {
+                                inline_string: 'felix',
+                              },
+                            },
+                          },
+                          {
+                            match: {
+                              prefix: '/testkit',
+                            },
+                            route: {
+                              host_rewrite: 'www.testkit.com',
+                              cluster: 'testkit',
+                            },
                           },
                         ],
                       },
