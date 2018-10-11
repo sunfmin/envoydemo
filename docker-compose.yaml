@@ -27,6 +27,12 @@
          "volumes": [
             "./prometheus.yml:/etc/prometheus/prometheus.yml"
          ]
+      },
+      "testkit": {
+         "image": "sunfmin/testkit",
+         "ports": [
+            "4000:4000"
+         ]
       }
    },
    "version": "3"

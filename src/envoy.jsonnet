@@ -19,8 +19,8 @@
         hosts: [
           {
             socket_address: {
-              address: 'www.baidu.com',
-              port_value: 80,
+              address: 'testkit',
+              port_value: 4000,
             },
 
           },
@@ -53,18 +53,24 @@
                     virtual_hosts: [
                       {
                         name: 'local_service',
+
+
                         domains: [
                           '*',
                         ],
                         routes: [
                           {
                             match: {
-                              prefix: '/',
+                              prefix: '/a',
                             },
-                            route: {
-                              host_rewrite: 'www.baidu.com',
-                              cluster: 'service_baidu',
+                            redirect: {
+                              path_redirect: '/b',
+                              strip_query: false,
                             },
+                            // route: {
+                            // host_rewrite: 'www.baidu.com',
+                            // cluster: 'service_baidu',
+                            // },
                           },
                         ],
                       },

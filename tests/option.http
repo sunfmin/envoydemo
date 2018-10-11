@@ -1,0 +1,2 @@
+GET http://localhost:10000/a HTTP/1.1
+Origin: http://foo.example

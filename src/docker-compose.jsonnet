@@ -14,6 +14,12 @@
         'loglevel=debug',
       ],
     },
+    testkit: {
+      image: 'sunfmin/testkit',
+      ports: [
+        '4000:4000',
+      ],
+    },
     prometheus: {
       image: 'quay.io/prometheus/prometheus',
       ports: [
