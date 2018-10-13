@@ -20,6 +20,15 @@
         '4000:4000',
       ],
     },
+    testkitv2: {
+      image: 'sunfmin/testkit',
+      ports: [
+        '5000:4000',
+      ],
+      environment: [
+        'TESTKIT_VERSION=v2',
+      ],
+    },
     prometheus: {
       image: 'quay.io/prometheus/prometheus',
       ports: [

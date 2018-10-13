@@ -33,6 +33,15 @@
          "ports": [
             "4000:4000"
          ]
+      },
+      "testkitv2": {
+         "environment": [
+            "TESTKIT_VERSION=v2"
+         ],
+         "image": "sunfmin/testkit",
+         "ports": [
+            "5000:4000"
+         ]
       }
    },
    "version": "3"

@@ -26,6 +26,21 @@
           },
         ],
       },
+      {
+        name: 'testkitv2',
+        connect_timeout: '0.25s',
+        type: 'LOGICAL_DNS',
+        dns_lookup_family: 'V4_ONLY',
+        lb_policy: 'ROUND_ROBIN',
+        hosts: [
+          {
+            socket_address: {
+              address: 'testkitv2',
+              port_value: 4000,
+            },
+          },
+        ],
+      },
     ],
     listeners: [
       {
@@ -42,7 +57,7 @@
               {
                 name: 'envoy.http_connection_manager',
                 config: {
-                  stat_prefix: 'ingress_http',
+                  stat_prefix: 'the-main-in-traffic',
                   http_filters: [
                     {
                       name: 'envoy.router',
@@ -82,11 +97,64 @@
                           {
                             match: {
                               prefix: '/testkit',
+                              headers: [
+                                {
+                                  name: 'x-use-version',
+                                  exact_match: 'testkitv2',
+                                },
+                              ],
+                            },
+                            route: {
+                              cluster: 'testkitv2',
+                            },
+                          },
+                          {
+                            match: {
+                              prefix: '/testkit',
                             },
                             route: {
                               host_rewrite: 'www.testkit.com',
                               cluster: 'testkit',
                             },
+                          },
+                          {
+                            match: {
+                              prefix: '/add_header',
+                            },
+                            request_headers_to_add: [
+                              {
+                                header: {
+                                  key: 'felix-header',
+                                  value: '123',
+                                },
+                                append: false,
+                              },
+                            ],
+                            route: {
+                              cluster: 'testkit',
+                            },
+                          },
+                          {
+                            match: {
+                              prefix: '/append_header',
+                            },
+                            request_headers_to_add: [
+                              {
+                                header: {
+                                  key: 'User-Agent',
+                                  value: 'This is added by felix',
+                                },
+                                append: true,
+                              },
+                            ],
+                            route: {
+                              cluster: 'testkit',
+                            },
+                            // metadata: {
+                            //   region: 'ap-south1',
+                            //   zone: 'zone1',
+                            //   sub_zone: 'sub_zone1',
+                            // },
                           },
                         ],
                       },

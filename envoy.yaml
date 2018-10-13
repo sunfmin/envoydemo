@@ -24,6 +24,21 @@
             "lb_policy": "ROUND_ROBIN",
             "name": "testkit",
             "type": "LOGICAL_DNS"
+         },
+         {
+            "connect_timeout": "0.25s",
+            "dns_lookup_family": "V4_ONLY",
+            "hosts": [
+               {
+                  "socket_address": {
+                     "address": "testkitv2",
+                     "port_value": 4000
+                  }
+               }
+            ],
+            "lb_policy": "ROUND_ROBIN",
+            "name": "testkitv2",
+            "type": "LOGICAL_DNS"
          }
       ],
       "listeners": [
@@ -75,18 +90,66 @@
                                        },
                                        {
                                           "match": {
+                                             "headers": [
+                                                {
+                                                   "exact_match": "testkitv2",
+                                                   "name": "x-use-version"
+                                                }
+                                             ],
+                                             "prefix": "/testkit"
+                                          },
+                                          "route": {
+                                             "cluster": "testkitv2"
+                                          }
+                                       },
+                                       {
+                                          "match": {
                                              "prefix": "/testkit"
                                           },
                                           "route": {
                                              "cluster": "testkit",
                                              "host_rewrite": "www.testkit.com"
                                           }
+                                       },
+                                       {
+                                          "match": {
+                                             "prefix": "/add_header"
+                                          },
+                                          "request_headers_to_add": [
+                                             {
+                                                "append": false,
+                                                "header": {
+                                                   "key": "felix-header",
+                                                   "value": "123"
+                                                }
+                                             }
+                                          ],
+                                          "route": {
+                                             "cluster": "testkit"
+                                          }
+                                       },
+                                       {
+                                          "match": {
+                                             "prefix": "/append_header"
+                                          },
+                                          "request_headers_to_add": [
+                                             {
+                                                "append": true,
+                                                "header": {
+                                                   "key": "User-Agent",
+                                                   "value": "This is added by felix"
+                                                }
+                                             }
+                                          ],
+                                          "route": {
+                                             "cluster": "testkit"
+                                          }
                                        }
                                     ]
                                  }
                               ]
                            },
-                           "stat_prefix": "ingress_http"
+                           "stat_prefix": "the-main-in-traffic"
                         },
                         "name": "envoy.http_connection_manager"
                      }
